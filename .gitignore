@@ -42,7 +42,6 @@ yarn-error.log*
 next-env.d.ts
 
 # agent tooling (per-developer, not product code)
-.claude/skills/
 .context/
 .conductor/
 
