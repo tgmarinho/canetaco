@@ -1,143 +1,151 @@
 # Canetaço
 
-> SaaS brasileiro de assinatura eletrônica de documentos com notificação por email e WhatsApp.
+> A Brazilian e-signature SaaS for legally valid document signing, with email and WhatsApp delivery.
 
-**Domínio:** [canetaco.com.br](https://canetaco.com.br) (em construção)
+![Next.js](https://img.shields.io/badge/Next.js-000000?logo=nextdotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=white)
+![Drizzle](https://img.shields.io/badge/Drizzle-C5F74F?logo=drizzle&logoColor=black)
+![Stripe](https://img.shields.io/badge/Stripe-635BFF?logo=stripe&logoColor=white)
 
-## Visão
+**Domain:** [canetaco.com.br](https://canetaco.com.br) (under construction)
 
-Plataforma de assinatura eletrônica com validade jurídica no Brasil, inspirada no modelo da Autentique (sem KYC obrigatório, validade via robustez de evidências), com WhatsApp nativo desde o dia 1 como diferencial.
+## Vision
 
-Concorrentes diretos: ZapSign, Clicksign, D4Sign, Autentique.
+An e-signature platform with legal validity in Brazil. It is inspired by Autentique's model: no mandatory KYC, validity through strong evidence. The differentiator is native WhatsApp from day one.
 
-## Base legal
+Direct competitors: ZapSign, Clicksign, D4Sign, Autentique.
 
-- **MP 2.200-2/2001 §2º** — validade da assinatura eletrônica entre as partes que aceitam o método
-- **Lei 14.063/2020** — níveis de assinatura (simples, avançada, qualificada)
-- **LGPD (Lei 13.709/2018)** — proteção de dados pessoais
+## Legal basis
+
+The Brazilian law references are kept verbatim. Each one has a short English gloss.
+
+- **MP 2.200-2/2001 §2º**: an electronic signature is valid between parties that accept the method.
+- **Lei 14.063/2020**: defines the signature levels, simple, advanced, and qualified.
+- **LGPD (Lei 13.709/2018)**: the Brazilian data protection law.
 
 ## Stack
 
-| Camada | Tecnologia |
+| Layer | Technology |
 |---|---|
 | Frontend + Backend | Next.js 16 (App Router) + TypeScript |
-| Hospedagem | Vercel |
-| Banco | Supabase Postgres |
+| Hosting | Vercel |
+| Database | Supabase Postgres |
 | Auth | Supabase Auth |
 | ORM | Drizzle |
-| Filas | Inngest |
+| Queues | Inngest |
 | Storage | Supabase Storage |
 | Email | AWS SES |
 | WhatsApp | Meta Cloud API |
 | PDF | pdf-lib + react-pdf |
 | Timestamp | freeTSA (MVP) / Serpro (v2) |
-| Observabilidade | Sentry + Axiom |
-| Pagamentos | Stripe BR |
+| Observability | Sentry + Axiom |
+| Payments | Stripe BR |
 
 ## Setup
 
-### Pré-requisitos
+### Prerequisites
 
 - Node.js 22+
 - pnpm 10+
-- Conta Supabase + projeto criado
-- Conta AWS (SES verificado para canetaco.com.br)
-- App WhatsApp Business no Meta for Developers
-- Conta Inngest
-- Conta Stripe BR
+- A Supabase account with a project created
+- An AWS account (SES verified for canetaco.com.br)
+- A WhatsApp Business app on Meta for Developers
+- An Inngest account
+- A Stripe BR account
 
-### Variáveis de ambiente
+### Environment variables
 
-Copie `.env.example` para `.env.local` e preencha:
+Copy `.env.example` to `.env.local` and fill it in:
 
 ```bash
 cp .env.example .env.local
 ```
 
-### Instalação
+### Install
 
 ```bash
 pnpm install
 ```
 
-### Banco de dados
+### Database
 
 ```bash
-# Gerar SQL de migration a partir do schema
+# Generate the migration SQL from the schema
 pnpm db:generate
 
-# Aplicar no banco
+# Apply it to the database
 pnpm db:migrate
 
-# Abrir Drizzle Studio
+# Open Drizzle Studio
 pnpm db:studio
 ```
 
-### Desenvolvimento
+### Development
 
 ```bash
 pnpm dev
 ```
 
-Abre em [http://localhost:3000](http://localhost:3000).
+It opens at [http://localhost:3000](http://localhost:3000).
 
-Para rodar o Inngest dev server em paralelo:
+To run the Inngest dev server in parallel:
 
 ```bash
 npx inngest-cli@latest dev
 ```
 
-## Estrutura
+## Structure
 
 ```
 app/
-  (marketing)/          → landing, pricing, páginas legais (privacidade, termos, dpo)
-  (app)/dashboard/      → área logada da organização
-  (sign)/s/[token]/     → fluxo público de assinatura
+  (marketing)/          → landing, pricing, legal pages (privacy, terms, dpo)
+  (app)/dashboard/      → logged-in organization area
+  (sign)/s/[token]/     → public signing flow
   api/
-    inngest/            → handler Inngest
+    inngest/            → Inngest handler
     webhooks/
-      whatsapp/         → callbacks Meta Cloud API
-      stripe/           → callbacks de billing
+      whatsapp/         → Meta Cloud API callbacks
+      stripe/           → billing callbacks
   actions/              → server actions
 lib/
   db/                   → Drizzle schema + client
-  supabase/             → clientes Supabase (client, server, middleware)
-  pdf/                  → carimbo de assinatura, hash, PAdES
-  crypto/               → criptografia AES-256 de PII em repouso
-  audit/                → gravador de eventos imutáveis
+  supabase/             → Supabase clients (client, server, middleware)
+  pdf/                  → signature stamp, hash, PAdES
+  crypto/               → AES-256 encryption of PII at rest
+  audit/                → immutable event recorder
   notifications/        → email (SES) + WhatsApp (Meta)
-  legal/                → versionamento de termos e políticas
+  legal/                → versioning of terms and policies
   utils/                → helpers (cn, hash, etc)
 inngest/
   client.ts             → Inngest client
-  functions/            → jobs duráveis (envelope.send, retention.purge, etc)
-drizzle/                → migrations geradas
+  functions/            → durable jobs (envelope.send, retention.purge, etc)
+drizzle/                → generated migrations
 ```
 
 ## Roadmap
 
-Plano completo em `~/.claude/plans/melhor-nome-entao-seria-radiant-mango.md`. Resumo:
+The full plan lives in `~/.claude/plans/melhor-nome-entao-seria-radiant-mango.md`. Summary:
 
-- **Fase 0** — Fundação (scaffolding, CI/CD, páginas legais)
-- **Fase 1** — Auth + multi-tenancy + Stripe billing
-- **Fase 2** — Documentos + fluxo de assinatura núcleo
-- **Fase 3** — WhatsApp OTP + SMS OTP + validação CPF + LGPD compliance
-- **Fase 4** — WhatsApp completo (templates HSM, fallback automático)
-- **Fase 5** — API pública, white-label, mobile (PWA)
-- **v2** — KYC Caf, ICP-Brasil qualificada, Pix como prova de identidade
+- **Phase 0**: Foundation (scaffolding, CI/CD, legal pages)
+- **Phase 1**: Auth + multi-tenancy + Stripe billing
+- **Phase 2**: Documents + core signing flow
+- **Phase 3**: WhatsApp OTP + SMS OTP + CPF validation + LGPD compliance
+- **Phase 4**: Full WhatsApp (HSM templates, automatic fallback)
+- **Phase 5**: Public API, white-label, mobile (PWA)
+- **v2**: Caf KYC, ICP-Brasil qualified signature, Pix as proof of identity
 
-## Modelo comercial
+## Commercial model
 
-- **Starter** — R$49/mês · 50 envelopes · trial 14 dias
-- **Pro** — R$149/mês · 200 envelopes · API + webhooks
-- **Enterprise** — sob consulta · ilimitado · SSO + DPA
+- **Starter**: R$49/month · 50 envelopes · 14-day trial
+- **Pro**: R$149/month · 200 envelopes · API + webhooks
+- **Enterprise**: on request · unlimited · SSO + DPA
 
-**Cofre Canetaço** (storage estendido além dos 30 dias grátis):
-- 1 ano — R$0,50/doc
-- 5 anos — R$2,00/doc
-- 10 anos — R$3,50/doc
+**Cofre Canetaço** (extended storage beyond the free 30 days):
+- 1 year: R$0.50/doc
+- 5 years: R$2.00/doc
+- 10 years: R$3.50/doc
 
-## Licença
+## License
 
-Proprietário · © Canetaço
+Proprietary · © Canetaço
